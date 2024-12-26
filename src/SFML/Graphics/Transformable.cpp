@@ -35,9 +35,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Transformable::setPosition(Vector2f position)
 {
-    m_position                   = position;
-    m_transformNeedUpdate        = true;
-    m_inverseTransformNeedUpdate = true;
+    m_position = position;
 }
 
 
@@ -45,27 +43,20 @@ void Transformable::setPosition(Vector2f position)
 void Transformable::setRotation(Angle angle)
 {
     m_rotation = angle.wrapUnsigned();
-
-    m_transformNeedUpdate        = true;
-    m_inverseTransformNeedUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Transformable::setScale(Vector2f factors)
 {
-    m_scale                      = factors;
-    m_transformNeedUpdate        = true;
-    m_inverseTransformNeedUpdate = true;
+    m_scale = factors;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Transformable::setOrigin(Vector2f origin)
 {
-    m_origin                     = origin;
-    m_transformNeedUpdate        = true;
-    m_inverseTransformNeedUpdate = true;
+    m_origin = origin;
 }
 
 
@@ -119,44 +110,30 @@ void Transformable::scale(Vector2f factor)
 
 
 ////////////////////////////////////////////////////////////
-const Transform& Transformable::getTransform() const
+Transform Transformable::getTransform() const
 {
-    // Recompute the combined transform if needed
-    if (m_transformNeedUpdate)
-    {
-        const float angle  = -m_rotation.asRadians();
-        const float cosine = std::cos(angle);
-        const float sine   = std::sin(angle);
-        const float sxc    = m_scale.x * cosine;
-        const float syc    = m_scale.y * cosine;
-        const float sxs    = m_scale.x * sine;
-        const float sys    = m_scale.y * sine;
-        const float tx     = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
-        const float ty     = m_origin.x * sxs - m_origin.y * syc + m_position.y;
+    const float angle  = -m_rotation.asRadians();
+    const float cosine = std::cos(angle);
+    const float sine   = std::sin(angle);
+    const float sxc    = m_scale.x * cosine;
+    const float syc    = m_scale.y * cosine;
+    const float sxs    = m_scale.x * sine;
+    const float sys    = m_scale.y * sine;
+    const float tx     = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
+    const float ty     = m_origin.x * sxs - m_origin.y * syc + m_position.y;
 
-        // clang-format off
-        m_transform = Transform( sxc, sys, tx,
-                                -sxs, syc, ty,
-                                 0.f, 0.f, 1.f);
-        // clang-format on
-        m_transformNeedUpdate = false;
-    }
-
-    return m_transform;
+    // clang-format off
+    return { sxc, sys, tx,
+            -sxs, syc, ty,
+             0.f, 0.f, 1.f};
+    // clang-format on
 }
 
 
 ////////////////////////////////////////////////////////////
-const Transform& Transformable::getInverseTransform() const
+Transform Transformable::getInverseTransform() const
 {
-    // Recompute the inverse transform if needed
-    if (m_inverseTransformNeedUpdate)
-    {
-        m_inverseTransform           = getTransform().getInverse();
-        m_inverseTransformNeedUpdate = false;
-    }
-
-    return m_inverseTransform;
+    return getTransform().getInverse();
 }
 
 } // namespace sf
