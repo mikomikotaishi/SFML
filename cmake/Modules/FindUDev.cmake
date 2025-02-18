@@ -9,6 +9,10 @@
 # Redistribution and use of this file is allowed according to the terms of the BSD license.
 #
 
+if(TARGET UDev::UDev)
+    return()
+endif()
+
 find_path(
     UDEV_INCLUDE_DIR
     libudev.h
