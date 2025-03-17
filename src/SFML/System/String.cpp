@@ -158,16 +158,12 @@ String::String(char32_t utf32Char) : m_string(1, utf32Char)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const char* ansiString, const std::locale& locale)
+String::String(const char* ansiString, const std::locale& /* locale */)
 {
     if (ansiString)
     {
-        const std::size_t length = std::strlen(ansiString);
-        if (length > 0)
-        {
-            m_string.reserve(length + 1);
-            Utf32::fromAnsi(ansiString, ansiString + length, std::back_inserter(m_string), locale);
-        }
+        const std::string_view view(ansiString);
+        Utf8::toUtf32(view.begin(), view.end(), std::back_inserter(m_string));
     }
 }
 

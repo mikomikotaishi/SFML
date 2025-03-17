@@ -269,6 +269,19 @@ TEST_CASE("[System] sf::String")
                 CHECK(!string.isEmpty());
                 CHECK(string.getData() != nullptr);
             }
+            {
+                const sf::String string = "🐌";
+                CHECK(std::string(string) == "\0"s);
+                CHECK(std::wstring(string) == L"🐌"s);
+                CHECK(string.toAnsiString() == "\0"s);
+                CHECK(string.toWideString() == L"🐌"s);
+                CHECK(string.toUtf8() == sf::U8String{0xF0, 0x9F, 0x90, 0x8C});
+                CHECK(string.toUtf16() == u"🐌"s);
+                CHECK(string.toUtf32() == U"🐌"s);
+                CHECK(string.getSize() == 1);
+                CHECK(!string.isEmpty());
+                CHECK(string.getData() != nullptr);
+            }
         }
 
         SECTION("ANSI string constructor")
@@ -342,6 +355,19 @@ TEST_CASE("[System] sf::String")
                 CHECK(string.toUtf16() == u"Улитка"s);
                 CHECK(string.toUtf32() == U"Улитка"s);
                 CHECK(string.getSize() == 6);
+                CHECK(!string.isEmpty());
+                CHECK(string.getData() != nullptr);
+            }
+            {
+                const sf::String string = L"🐌";
+                CHECK(std::string(string) == "\0"s);
+                CHECK(std::wstring(string) == L"🐌"s);
+                CHECK(string.toAnsiString() == "\0"s);
+                CHECK(string.toWideString() == L"🐌"s);
+                CHECK(string.toUtf8() == sf::U8String{0xF0, 0x9F, 0x90, 0x8C});
+                CHECK(string.toUtf16() == u"🐌"s);
+                CHECK(string.toUtf32() == U"🐌"s);
+                CHECK(string.getSize() == 1);
                 CHECK(!string.isEmpty());
                 CHECK(string.getData() != nullptr);
             }
